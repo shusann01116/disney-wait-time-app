@@ -7,6 +7,6 @@ include "root" {
 }
 
 inputs = {
-  env = "dev"
+  env                = "dev"
   lambda_source_path = "${get_repo_root()}/app/collector"
 }

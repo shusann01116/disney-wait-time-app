@@ -1,7 +1,7 @@
 generate "backend" {
-  path = "backend.tf"
+  path      = "backend.tf"
   if_exists = "overwrite_terragrunt"
-  contents = <<-EOF
+  contents  = <<-EOF
     terraform {
       backend "s3" {
         bucket = "shusann-terraform-state"
