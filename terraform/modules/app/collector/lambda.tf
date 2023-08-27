@@ -7,7 +7,7 @@ module "collector" {
   handler       = "index.handler"
   runtime       = "python3.11"
   publish       = true
-  timeout       = 60
+  timeout       = 15
   architectures = ["arm64"]
 
   source_path = var.lambda_source_path

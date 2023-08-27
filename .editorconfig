@@ -7,3 +7,4 @@ indent_size = 2
 
 [*.py]
 profile = black
+indent_size = 4
