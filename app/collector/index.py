@@ -2,7 +2,7 @@ import json
 import logging
 import os
 from collections.abc import Mapping
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, tzinfo
 from decimal import Decimal
 from typing import Any, Literal, Sequence, Set, Union
 
@@ -74,7 +74,12 @@ class AttractionRepository:
     ]:
         return {
             "attraction_id": {"S": attraction.FacilityID},  # PK
-            "timestamp": {"S": self._print_iso(attraction.UpdateTime)},  # SK
+            "timestamp": {  # SK
+                "S": self._print_iso(
+                    updateTime=attraction.UpdateTime,
+                    operatingHoursFromDate=attraction.OperatingHoursFromDate,
+                )
+            },
             "name": {"S": self._get_str(attraction.FacilityName)},
             "status_id": {"S": self._get_str(attraction.OperatingStatusCD)},
             "status": {"S": self._get_str(attraction.OperatingStatus)},
@@ -88,15 +93,37 @@ class AttractionRepository:
             return ""
         return value
 
-    def _print_iso(self, str_time: str) -> str:
-        (hour, minute) = str_time.split(":")
-        return (
-            datetime.now(timezone(timedelta(hours=9)))
-            .replace(hour=int(hour), minute=int(minute), second=0, microsecond=0)
-            .replace(tzinfo=timezone.utc)
-            .isoformat(sep="T")
+    def _print_iso(
+        self, *, updateTime: str, operatingHoursFromDate: str, timeDelta=9
+    ) -> str:
+        # 23:21
+        (hour, minute) = updateTime.split(":")
+        (hour, minute) = (int(hour), int(minute))
+
+        # 20230823
+        (year, month, day) = (
+            int(operatingHoursFromDate[0:4]),
+            int(operatingHoursFromDate[4:6]),
+            int(operatingHoursFromDate[6:8]),
         )
 
+        if not 0 <= hour <= 24:
+            raise Exception("hour is not in the range of 0-24")
+        if not 0 <= minute <= 60:
+            raise Exception("minute is not in the range of 0-60")
+        if not 1 <= month <= 12:
+            raise Exception("month is not in the range of 1-12")
+        if not 1 <= day <= 31:
+            raise Exception("day is not in the range of 1-31")
+
+        return datetime(
+            year=year,
+            month=month,
+            day=day,
+            hour=hour,
+            minute=minute,
+            tzinfo=timezone(timedelta(hours=timeDelta)),
+        ).isoformat(sep="T")
 
 def fetch_document(url: str, *, params: dict | None = None) -> str:
     headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "}
@@ -112,28 +139,17 @@ def parse_document(document: str) -> list[Attraction]:
     return result
 
 
-def is_park_open(base_url: str) -> bool:
-    path = "/view_interface.php"
-    params = {
-        "blockId": 94199,
-        "pageBlockId": 5805799,
-        "cmd": "openStatus",
-        "rt": 1,
-    }
-    url = base_url + path
-    return json.loads(fetch_document(url, params=params))["close_flg"] == "1"
-
-
 def main() -> None:
-    if not is_park_open(base_url):
-        logger.info("Park is closed")
-        return
-
-    time_stamp = str(int(datetime.now(timezone(timedelta(hours=9))).timestamp()))
-
     attractions: list[Attraction] | None = None
     for path in paths:
-        attractions = parse_document(fetch_document(base_url + path + "?" + time_stamp))
+        attractions = parse_document(
+            fetch_document(
+                base_url
+                + path
+                + "?"
+                + str(int(datetime.now(timezone(timedelta(hours=9))).timestamp()))
+            )
+        )
 
     if attractions is None:
         logger.warn("No information is fetched")
