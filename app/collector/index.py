@@ -79,14 +79,14 @@ class AttractionRepository:
             ],
         ],
     ]:
+        dt = self._parse_to_datetime(
+            updateTime=attraction.UpdateTime,
+            operatingHoursFromDate=attraction.OperatingHoursFromDate,
+        )
         return {
             "attraction_id": {"S": attraction.FacilityID},  # PK
-            "timestamp": {  # SK
-                "S": self._print_iso(
-                    updateTime=attraction.UpdateTime,
-                    operatingHoursFromDate=attraction.OperatingHoursFromDate,
-                ),
-            },
+            "timestamp": {"S": dt.isoformat()},  # SK
+            "date": {"S": dt.strftime("%Y-%m-%d")},  # GPK-1
             "name": {"S": self._get_str(attraction.FacilityName)},
             "status_id": {"S": self._get_str(attraction.OperatingStatusCD)},
             "status": {"S": self._get_str(attraction.OperatingStatus)},
@@ -100,13 +100,13 @@ class AttractionRepository:
             return ""
         return value
 
-    def _print_iso(
+    def _parse_to_datetime(
         self,
         *,
         updateTime: str,
         operatingHoursFromDate: str,
         timeDelta=9,
-    ) -> str:
+    ) -> datetime:
         # 23:21
         (hour, minute) = updateTime.split(":")
         (hour, minute) = (int(hour), int(minute))
@@ -134,7 +134,7 @@ class AttractionRepository:
             hour=hour,
             minute=minute,
             tzinfo=timezone(timedelta(hours=timeDelta)),
-        ).isoformat(sep="T")
+        )
 
 
 def fetch_document(url: str, *, params: dict | None = None) -> str:

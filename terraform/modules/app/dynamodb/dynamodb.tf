@@ -13,5 +13,15 @@ resource "aws_dynamodb_table" "wating_times" {
     name = "timestamp"
     type = "S"
   }
+  attribute {
+    name = "date"
+    type = "S"
+  }
 
+  global_secondary_index {
+    name            = "date-index"
+    hash_key        = "date"
+    range_key       = "attraction_id"
+    projection_type = "ALL"
+  }
 }
