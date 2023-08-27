@@ -2,7 +2,7 @@ import json
 import logging
 import os
 from collections.abc import Mapping
-from datetime import datetime, timedelta, timezone, tzinfo
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from typing import Any, Literal, Sequence, Set, Union
 
@@ -47,6 +47,8 @@ class AttractionRepository:
             logger.error(e)
             raise e
 
+        logger.info(f"succeeded to put item: {attraction.FacilityID}")
+
     def _to_dynamo_item(
         self,
         attraction: Attraction,
@@ -78,7 +80,7 @@ class AttractionRepository:
                 "S": self._print_iso(
                     updateTime=attraction.UpdateTime,
                     operatingHoursFromDate=attraction.OperatingHoursFromDate,
-                )
+                ),
             },
             "name": {"S": self._get_str(attraction.FacilityName)},
             "status_id": {"S": self._get_str(attraction.OperatingStatusCD)},
@@ -94,7 +96,11 @@ class AttractionRepository:
         return value
 
     def _print_iso(
-        self, *, updateTime: str, operatingHoursFromDate: str, timeDelta=9
+        self,
+        *,
+        updateTime: str,
+        operatingHoursFromDate: str,
+        timeDelta=9,
     ) -> str:
         # 23:21
         (hour, minute) = updateTime.split(":")
@@ -125,9 +131,12 @@ class AttractionRepository:
             tzinfo=timezone(timedelta(hours=timeDelta)),
         ).isoformat(sep="T")
 
+
 def fetch_document(url: str, *, params: dict | None = None) -> str:
     headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "}
-    return requests.get(url, headers=headers, params=params).text
+    docs = requests.get(url, headers=headers, params=params).text
+    logger.info(f"fetched {len(docs)} bytes")
+    return docs
 
 
 def parse_document(document: str) -> list[Attraction]:
@@ -136,6 +145,7 @@ def parse_document(document: str) -> list[Attraction]:
     for a in json.loads(document):
         result.append(Attraction(**a))
 
+    logger.info(f"parsed {len(result)} attractions")
     return result
 
 
@@ -147,8 +157,8 @@ def main() -> None:
                 base_url
                 + path
                 + "?"
-                + str(int(datetime.now(timezone(timedelta(hours=9))).timestamp()))
-            )
+                + str(int(datetime.now(timezone(timedelta(hours=9))).timestamp())),
+            ),
         )
 
     if attractions is None:
@@ -162,12 +172,17 @@ def main() -> None:
         # Skip if any of the required fields are None for DynamoDB
         if att.FacilityID is None:  # PK
             logger.warn("FacilityID is None")
+            logger.warn(f"Skipping: {att}")
             continue
         if att.OperatingStatusCD is None:  # SK
             logger.warn("OperatingStatusCD is None")
+            logger.warn(f"Skipping: {att}")
             continue
 
         repo.put_item(att)
+
+    logger.info(f"finished to put {len(attractions)} items")
+    logger.info("done")
 
 
 if __name__ == "__main__":
