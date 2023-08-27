@@ -2,7 +2,7 @@ import json
 import logging
 import os
 from collections.abc import Mapping
-from datetime import datetime, timedelta, timezone, tzinfo
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from typing import Any, Literal, Sequence, Set, Union
 
