@@ -1,3 +1,5 @@
+data "aws_region" "current" {}
+
 module "collector" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "~> 6.0"
@@ -13,8 +15,13 @@ module "collector" {
   source_path = var.lambda_source_path
 
   environment_variables = {
-    DYNAMODB_TABLENAME = var.table_name
+    DYNAMODB_TABLENAME      = var.table_name
+    AWS_LAMBDA_EXEC_WRAPPER = "/opt/otel-instrument"
   }
+
+  layers = [
+    "arn:aws:lambda:${data.aws_region.current.name}:901920570463:layer:aws-otel-python-arm64-ver-1-19-0:2"
+  ]
 
   allowed_triggers = {
     CronRule = {
@@ -22,6 +29,9 @@ module "collector" {
       source_arn = aws_cloudwatch_event_rule.cron_rule.arn
     }
   }
+
+  attach_tracing_policy = true
+  tracing_mode          = "Active"
 
   attach_policy_statements = true
   policy_statements = {
