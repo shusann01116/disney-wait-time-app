@@ -4,9 +4,9 @@ generate "backend" {
   contents  = <<-EOF
     terraform {
       backend "s3" {
-        bucket = "shusann-terraform-state"
-        key = "disney-wait-time-app/dev/${path_relative_to_include()}/terraform.tfstate"
-        region = "ap-northeast-1"
+        bucket  = "shusann-terraform-state"
+        key     = "disney-wait-time-app/dev/${path_relative_to_include()}/terraform.tfstate"
+        region  = "ap-northeast-1"
         encrypt = true
       }
     }
