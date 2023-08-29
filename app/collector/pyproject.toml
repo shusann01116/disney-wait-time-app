@@ -9,7 +9,7 @@ readme = "README.md"
 python = "^3.11"
 requests = "^2.31.0"
 requests-file = "^1.5.1"
-boto3-stubs = {version = "1.27.1", extras = ["essential"]}
+boto3-stubs = { version = "1.27.1", extras = ["essential"] }
 
 
 [tool.poetry.group.dev.dependencies]
@@ -22,5 +22,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
-line-length = 120
 target-version = ['py311']

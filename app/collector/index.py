@@ -19,6 +19,11 @@ if DYNAMODB_TABLENAME is None:
     logger.error("DYNAMODB_TABLENAME is not set.")
     raise Exception()
 
+LOGGING_LEVEL = os.getenv("LOGGING_LEVEL")
+if LOGGING_LEVEL is None:
+    LOGGING_LEVEL = "INFO"
+logger.setLevel(LOGGING_LEVEL)
+
 
 base_url = "https://www.tokyodisneyresort.jp"
 
@@ -47,6 +52,8 @@ class AttractionRepository:
             logger.error(e)
             raise e
 
+        logger.info(f"succeeded to put item: {attraction}")
+
     def _to_dynamo_item(
         self,
         attraction: Attraction,
@@ -72,9 +79,14 @@ class AttractionRepository:
             ],
         ],
     ]:
+        dt = self._parse_to_datetime(
+            updateTime=attraction.UpdateTime,
+            operatingHoursFromDate=attraction.OperatingHoursFromDate,
+        )
         return {
             "attraction_id": {"S": attraction.FacilityID},  # PK
-            "timestamp": {"S": self._print_iso(attraction.UpdateTime)},  # SK
+            "timestamp": {"S": dt.isoformat()},  # SK
+            "date": {"S": dt.strftime("%Y-%m-%d")},  # GPK-1
             "name": {"S": self._get_str(attraction.FacilityName)},
             "status_id": {"S": self._get_str(attraction.OperatingStatusCD)},
             "status": {"S": self._get_str(attraction.OperatingStatus)},
@@ -88,19 +100,48 @@ class AttractionRepository:
             return ""
         return value
 
-    def _print_iso(self, str_time: str) -> str:
-        (hour, minute) = str_time.split(":")
-        return (
-            datetime.now(timezone(timedelta(hours=9)))
-            .replace(hour=int(hour), minute=int(minute), second=0, microsecond=0)
-            .replace(tzinfo=timezone.utc)
-            .isoformat(sep="T")
+    def _parse_to_datetime(
+        self,
+        *,
+        updateTime: str,
+        operatingHoursFromDate: str,
+        timeDelta=9,
+    ) -> datetime:
+        # 23:21
+        (hour, minute) = updateTime.split(":")
+        (hour, minute) = (int(hour), int(minute))
+
+        # 20230823
+        (year, month, day) = (
+            int(operatingHoursFromDate[0:4]),
+            int(operatingHoursFromDate[4:6]),
+            int(operatingHoursFromDate[6:8]),
+        )
+
+        if not 0 <= hour <= 24:
+            raise Exception("hour is not in the range of 0-24")
+        if not 0 <= minute <= 60:
+            raise Exception("minute is not in the range of 0-60")
+        if not 1 <= month <= 12:
+            raise Exception("month is not in the range of 1-12")
+        if not 1 <= day <= 31:
+            raise Exception("day is not in the range of 1-31")
+
+        return datetime(
+            year=year,
+            month=month,
+            day=day,
+            hour=hour,
+            minute=minute,
+            tzinfo=timezone(timedelta(hours=timeDelta)),
         )
 
 
 def fetch_document(url: str, *, params: dict | None = None) -> str:
     headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "}
-    return requests.get(url, headers=headers, params=params).text
+    docs = requests.get(url, headers=headers, params=params).text
+    logger.info(f"fetched {len(docs)} bytes")
+    return docs
 
 
 def parse_document(document: str) -> list[Attraction]:
@@ -109,49 +150,46 @@ def parse_document(document: str) -> list[Attraction]:
     for a in json.loads(document):
         result.append(Attraction(**a))
 
+    logger.info(f"parsed {len(result)} attractions")
     return result
 
 
-def is_park_open(base_url: str) -> bool:
-    path = "/view_interface.php"
-    params = {
-        "blockId": 94199,
-        "pageBlockId": 5805799,
-        "cmd": "openStatus",
-        "rt": 1,
-    }
-    url = base_url + path
-    return json.loads(fetch_document(url, params=params))["close_flg"] == "1"
-
-
 def main() -> None:
-    if not is_park_open(base_url):
-        logger.info("Park is closed")
-        return
-
-    time_stamp = str(int(datetime.now(timezone(timedelta(hours=9))).timestamp()))
-
+    repo = AttractionRepository(boto3.client("dynamodb"), DYNAMODB_TABLENAME)
     attractions: list[Attraction] | None = None
     for path in paths:
-        attractions = parse_document(fetch_document(base_url + path + "?" + time_stamp))
+        attractions = parse_document(
+            fetch_document(
+                base_url
+                + path
+                + "?"
+                + str(int(datetime.now(timezone(timedelta(hours=9))).timestamp())),
+            ),
+        )
 
-    if attractions is None:
-        logger.warn("No information is fetched")
-        return
+        if attractions is None:
+            logger.warn("no information is fetched")
+            return
 
-    repo = AttractionRepository(boto3.client("dynamodb"), DYNAMODB_TABLENAME)
-    for att in attractions:
-        # TODO: make this loop async when the performance came up as an issue
+        for att in attractions:
+            # TODO: make this loop async when the performance came up as an issue
+            logger.debug(f"att: {att}")
 
-        # Skip if any of the required fields are None for DynamoDB
-        if att.FacilityID is None:  # PK
-            logger.warn("FacilityID is None")
-            continue
-        if att.OperatingStatusCD is None:  # SK
-            logger.warn("OperatingStatusCD is None")
-            continue
+            # Skip if any of the required fields are None for DynamoDB
+            if att.FacilityID is None:  # PK
+                logger.warn("FacilityID is None")
+                logger.warn(f"skipping: {att}")
+                continue
+            if att.OperatingStatusCD is None:  # SK
+                logger.warn("OperatingStatusCD is None")
+                logger.warn(f"skipping: {att}")
+                continue
 
-        repo.put_item(att)
+            repo.put_item(att)
+
+        logger.info(f"finished to put {len(attractions)} items")
+
+    logger.info("done")
 
 
 if __name__ == "__main__":
