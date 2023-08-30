@@ -1,5 +1,5 @@
 terraform {
-  source = "../../../modules/app//dynamodb"
+  source = "../../../modules//dynamodb"
 }
 
 include "root" {
