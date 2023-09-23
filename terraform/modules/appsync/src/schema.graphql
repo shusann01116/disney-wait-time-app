@@ -1,0 +1,40 @@
+schema {
+  mutation: Mutation
+  query: Query
+}
+
+type PaginatedWaitTimes {
+  nextToken: String
+  waittimes: [WaitTime!]!
+}
+
+type Query {
+  getWaitTime(
+    attraction_id: ID!
+    date: AWSDate!
+    limit: Int
+    nextToken: String
+  ): PaginatedWaitTimes!
+}
+
+type Mutation {
+  addWaitTime(
+    attraction_id: ID!
+    date: AWSDate!
+    name: String!
+    status: String
+    status_id: ID
+    timestamp: AWSDateTime!
+    wait_time: Int!
+  ): WaitTime!
+}
+
+type WaitTime {
+  attraction_id: ID!
+  date: AWSDate
+  name: String
+  status: String
+  status_id: ID
+  timestamp: AWSDateTime!
+  wait_time: Int
+}
