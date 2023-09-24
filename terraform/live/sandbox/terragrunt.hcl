@@ -1,3 +1,8 @@
+locals {
+  region         = "ap-northeast-1"
+  aws_account_id = "863718060005"
+}
+
 generate "backend" {
   path      = "backend.tf"
   if_exists = "overwrite_terragrunt"
@@ -19,9 +24,19 @@ generate "provider" {
   contents  = <<-EOF
     provider "aws" {
       assume_role {
-        role_arn = "arn:aws:iam::863718060005:role/terragrunt"
+        role_arn = "arn:aws:iam::${local.aws_account_id}:role/terragrunt"
       }
     }
+
+    data "aws_ecr_authorization_token" "token" {}
+
+    provider "docker" {
+      registry_auth {
+        address  = "${local.aws_account_id}.dkr.ecr.${local.region}.amazonaws.com"
+        username = data.aws_ecr_authorization_token.token.user_name
+        password = data.aws_ecr_authorization_token.token.password
+      }
+  }
   EOF
 }
 

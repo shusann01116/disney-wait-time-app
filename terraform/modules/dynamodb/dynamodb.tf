@@ -1,27 +1,41 @@
 resource "aws_dynamodb_table" "wating_times" {
   name         = var.table_name
-  hash_key     = "attraction_id"
-  range_key    = "timestamp"
+  hash_key     = "PK"
+  range_key    = "SK"
   billing_mode = "PAY_PER_REQUEST"
   table_class  = "STANDARD_INFREQUENT_ACCESS"
 
   attribute {
-    name = "attraction_id"
+    name = "PK"
     type = "S"
   }
   attribute {
-    name = "timestamp"
+    name = "SK"
     type = "S"
   }
   attribute {
-    name = "date"
+    name = "Data"
+    type = "S"
+  }
+  attribute {
+    name = "FacilityIndexId"
     type = "S"
   }
 
   global_secondary_index {
-    name            = "date-index"
-    hash_key        = "date"
-    range_key       = "attraction_id"
+    name            = "GSI-1"
+    hash_key        = "SK"
+    range_key       = "Data"
     projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "FacilityIndex"
+    hash_key        = "FacilityIndexId"
+    range_key       = "Data"
+    projection_type = "INCLUDE"
+    non_key_attributes = [
+      "FacilityKanaName"
+    ]
   }
 }
