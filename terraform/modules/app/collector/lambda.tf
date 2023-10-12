@@ -25,7 +25,7 @@ module "collector" {
     "arn:aws:lambda:${data.aws_region.current.id}:901920570463:layer:aws-otel-collector-arm64-ver-0-82-0:1"
   ]
 
-  timeout       = 3
+  timeout       = 30
   architectures = ["arm64"]
 
   environment_variables = {

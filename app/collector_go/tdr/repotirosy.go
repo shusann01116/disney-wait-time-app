@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"reflect"
 	"strconv"
@@ -19,6 +20,15 @@ import (
 type TdrClient struct {
 	Ctx    context.Context
 	Client *http.Client
+	rand   *rand.Rand
+}
+
+func (t *TdrClient) getRandInt31() int {
+	if t.rand == nil {
+		t.rand = rand.New(rand.NewSource(time.Now().UnixNano()))
+	}
+
+	return int(t.rand.Int31())
 }
 
 func (t *TdrClient) getRequest(url string) (*http.Request, error) {
@@ -49,7 +59,7 @@ func (t *TdrClient) getRequest(url string) (*http.Request, error) {
 	)
 	req.Header.Add(
 		"Cookie",
-		"dummy",
+		fmt.Sprintf("%d", t.getRandInt31()),
 	)
 	return req, nil
 }

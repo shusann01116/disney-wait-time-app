@@ -79,10 +79,7 @@ func lambdaHandler(
 		for _, s := range standbys {
 			// standby
 			s.FacilityID = facility.ID
-			err = table.AddStandby(
-				ctx,
-				s,
-			)
+			err = table.AddStandby(ctx, s)
 			if err != nil {
 				log.Error().Stack().Err(err).Msg("")
 				return events.APIGatewayV2HTTPResponse{StatusCode: 400, Body: "\"Failed!\""}, err

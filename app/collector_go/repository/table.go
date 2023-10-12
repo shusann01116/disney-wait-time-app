@@ -98,11 +98,14 @@ func (t Table) AddStandbyBatch(
 }
 
 func (t Table) AddStandby(ctx context.Context, standby core.Standby) error {
+	log.Info().Msgf("AddStandby: %v", standby)
+
 	item, err := attributevalue.MarshalMap(standby)
 	if err != nil {
 		return err
 	}
 
+	log.Debug().Msgf("item: %v", item)
 	_, err = t.DynamoDBClient.PutItem(ctx, &dynamodb.PutItemInput{
 		TableName: &t.TableName,
 		Item:      item,
