@@ -10,6 +10,17 @@
       "StackName": "amplify-disneystandbyapp-dev-213142",
       "StackId": "arn:aws:cloudformation:ap-northeast-1:863718060005:stack/amplify-disneystandbyapp-dev-213142/3dffefb0-9821-11ee-90b6-065d67b6418b",
       "AmplifyAppId": "d2d41x9dhq26vf"
+    },
+    "categories": {
+      "api": {
+        "disneystandbyapp": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d2d41x9dhq26vf",
+          "type": "cicd"
+        }
+      }
     }
   }
 }
