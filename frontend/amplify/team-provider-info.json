@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-disneystandbyapp-dev-213142-authRole",
+      "UnauthRoleArn": "arn:aws:iam::863718060005:role/amplify-disneystandbyapp-dev-213142-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::863718060005:role/amplify-disneystandbyapp-dev-213142-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-disneystandbyapp-dev-213142-deployment",
+      "UnauthRoleName": "amplify-disneystandbyapp-dev-213142-unauthRole",
+      "StackName": "amplify-disneystandbyapp-dev-213142",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:863718060005:stack/amplify-disneystandbyapp-dev-213142/3dffefb0-9821-11ee-90b6-065d67b6418b",
+      "AmplifyAppId": "d2d41x9dhq26vf"
+    }
+  }
+}

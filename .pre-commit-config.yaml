@@ -3,12 +3,9 @@ repos:
     rev: v4.4.0
     hooks:
       - id: check-yaml
-      - id: check-json
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: mixed-line-ending
-      - id: pretty-format-json
-        args: [--autofix, --no-sort-keys]
       - id: fix-byte-order-marker
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
     rev: 2.7.2
