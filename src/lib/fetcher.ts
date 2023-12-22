@@ -42,8 +42,8 @@ type Facility = {
   operatingHours: FacilityOperatingHours[];
 };
 
-export async function GetFacilities() {
-  var rawData = await getData(link);
+export async function GetFacilities(park: string) {
+  var rawData = await getData(links[park]);
   if (rawData == null) {
     return [{ FacilityName: "failed", FacilityID: "0" } as Facility];
   }
@@ -68,4 +68,11 @@ async function getData(url: string) {
   return res.text();
 }
 
-const link = "https://www.tokyodisneyresort.jp/_/realtime/tdl_attraction.json";
+interface Dictionary<T> {
+  [Key: string]: T;
+}
+
+const links: Dictionary<string> = {
+  tdl: "https://www.tokyodisneyresort.jp/_/realtime/tdl_attraction.json",
+  tds: "https://www.tokyodisneyresort.jp/_/realtime/tds_attraction.json",
+};
