@@ -43,11 +43,29 @@ type Facility = {
 };
 
 export async function GetFacilities() {
-  const rawData = await fetch(link, { next: { revalidate: 60 } }).then((res) =>
-    res.text(),
-  );
-  const facilities: Facility[] = JSON.parse(rawData);
-  return facilities;
+  var rawData = await getData(link);
+  if (rawData == null) {
+    return [{ FacilityName: "failed", FacilityID: "0" } as Facility];
+  }
+
+  return JSON.parse(rawData) as Facility[];
+}
+
+async function getData(url: string) {
+  const res = await fetch(url, {
+    next: { revalidate: 60 },
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ",
+    },
+  });
+
+  if (!res.ok) {
+    console.error("Failed to fetch data: ", res.statusText);
+    console.error("Failed to fetch data: ", url);
+    return null;
+  }
+
+  return res.text();
 }
 
 const link = "https://www.tokyodisneyresort.jp/_/realtime/tdl_attraction.json";
