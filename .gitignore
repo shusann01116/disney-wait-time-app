@@ -73,3 +73,5 @@ terraform.rc
 # Ignore Terragrunt files
 terragrunt.iml
 .terragrunt-cache
+
+.ruff_cache
