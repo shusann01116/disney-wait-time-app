@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import Top from "@/components/navbar";
+import Header from "@/components/page-header";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,10 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="black">
       <body className={cn(inter.className, "items-center justify-center")}>
-        <Top />
-        <div className="mt-4 px-4 w-full max-w-[1024px] flex flex-col mx-auto items-center justify-center">
-          {children}
-        </div>
+        <ThemeProvider>
+          <div className="container flex flex-col mx-auto items-center justify-center">
+            {children}
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
