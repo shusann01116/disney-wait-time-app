@@ -1,45 +1,57 @@
 "use clinet";
 
+import { badgeVariants } from "@/components/ui/badge";
 import { GetFacilities } from "@/lib/fetcher";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export default async function Home({ params }: { params: { park: string } }) {
   const facilities = await GetFacilities(params.park);
 
   return (
     <>
-      <div className="w-full max-w-[1024px] flex flex-col mx-auto items-center">
-        <ul className="columns-3xs lg:columns-3 gap-3">
-          {facilities.map((facility) => {
-            return (
-              <li
-                key={facility.FacilityID}
-                className="bg-gray-50 drop-shadow-lg border border-slate-700 w-full min-w-unit-sm py-2 px-4 rounded-md my-2 first:mt-0 last:md-0 overflow-auto"
-              >
-                <div>
-                  <div className="text-wrap text-xl font-bold">
-                    {facility.FacilityName}
-                  </div>
-                  <div className="flex mt-2">
-                    <div className="text-sm text-slate-500  items-center">
-                      {facility.OperatingStatus}
-                    </div>
-                    <div className="text-sm text-slate-500 text-right flex-grow">
-                      {facility.StandbyTime === null ? (
-                        <></>
-                      ) : (
-                        <span className={cn("text-slate-700 text-sm")}>
-                          {facility.StandbyTime} 分待ち
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+      <div className="flex gap-4 py-4">
+        <Link
+          href="/standby/tdl"
+          className={badgeVariants({ variant: "outline" })}
+        >
+          Disneyland
+        </Link>
+        <Link
+          href="/standby/tds"
+          className={badgeVariants({ variant: "outline" })}
+        >
+          DisneySea
+        </Link>
       </div>
+      <ul className="w-full max-w-3xl divide-y">
+        {facilities.map((facility) => {
+          return (
+            <li
+              key={facility.FacilityID}
+              className="overflow-hidden bg-background py-4"
+            >
+              <div className="text-wrap text-xl font-bold text-foreground">
+                {facility.FacilityName}
+              </div>
+              <div className="mt-2 flex">
+                <div className="items-center text-sm text-secondary-foreground">
+                  {facility.OperatingStatus}
+                </div>
+                <div className="flex-grow text-right text-sm text-secondary-foreground">
+                  {facility.StandbyTime === null ? (
+                    <></>
+                  ) : (
+                    <span className={cn("text-sm text-secondary-foreground")}>
+                      {facility.StandbyTime} 分待ち
+                    </span>
+                  )}
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
       <div className="mt-4"></div>
     </>
   );
