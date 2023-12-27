@@ -1,5 +1,3 @@
-"use clinet";
-
 import { badgeVariants } from "@/components/ui/badge";
 import { GetFacilities } from "@/lib/fetcher";
 import { cn } from "@/lib/utils";
@@ -13,13 +11,25 @@ export default async function Home({ params }: { params: { park: string } }) {
       <div className="flex gap-4 py-4">
         <Link
           href="/standby/tdl"
-          className={badgeVariants({ variant: "outline" })}
+          className={cn(
+            badgeVariants({ variant: "outline" }),
+            "bg-muted text-muted-foreground",
+            {
+              "bg-inherit text-foreground": params.park === "tdl",
+            },
+          )}
         >
-          Disneyland
+          DisneyLand
         </Link>
         <Link
           href="/standby/tds"
-          className={badgeVariants({ variant: "outline" })}
+          className={cn(
+            badgeVariants({ variant: "outline" }),
+            "bg-muted text-muted-foreground",
+            {
+              "bg-inherit text-foreground": params.park === "tds",
+            },
+          )}
         >
           DisneySea
         </Link>
