@@ -15,7 +15,7 @@ export default async function Home({ params }: { params: { park: string } }) {
             badgeVariants({ variant: "outline" }),
             "bg-muted text-muted-foreground",
             {
-              "bg-inherit text-foreground": params.park === "tdl",
+              "bg-background text-foreground": params.park === "tdl",
             },
           )}
         >
@@ -27,7 +27,7 @@ export default async function Home({ params }: { params: { park: string } }) {
             badgeVariants({ variant: "outline" }),
             "bg-muted text-muted-foreground",
             {
-              "bg-inherit text-foreground": params.park === "tds",
+              "bg-background text-foreground": params.park === "tds",
             },
           )}
         >
@@ -39,24 +39,28 @@ export default async function Home({ params }: { params: { park: string } }) {
           return (
             <li
               key={facility.FacilityID}
-              className="overflow-hidden bg-background py-4"
+              className="flex items-center overflow-hidden bg-background py-4"
             >
-              <div className="text-wrap text-xl font-bold text-foreground">
-                {facility.FacilityName}
+              <div className="w-5/6">
+                <div className="text-wrap text-xl font-bold text-foreground">
+                  {facility.FacilityName}
+                </div>
+                <div className="mt-2 flex">
+                  <div className="items-center text-sm text-secondary-foreground">
+                    {facility.OperatingStatus}
+                  </div>
+                </div>
               </div>
-              <div className="mt-2 flex">
-                <div className="items-center text-sm text-secondary-foreground">
-                  {facility.OperatingStatus}
-                </div>
-                <div className="flex-grow text-right text-sm text-secondary-foreground">
-                  {facility.StandbyTime === null ? (
-                    <></>
-                  ) : (
-                    <span className={cn("text-sm text-secondary-foreground")}>
-                      {facility.StandbyTime} 分待ち
-                    </span>
-                  )}
-                </div>
+              <div className="w-1/6 text-right">
+                {facility.StandbyTime === null ||
+                facility.StandbyTime === false ? (
+                  <></>
+                ) : (
+                  <>
+                    {facility.StandbyTime}
+                    &nbsp;分待ち
+                  </>
+                )}
               </div>
             </li>
           );
