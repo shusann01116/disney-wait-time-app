@@ -41,7 +41,7 @@ export default async function Home({ params }: { params: { park: string } }) {
               key={facility.FacilityID}
               className="flex items-center overflow-hidden bg-background py-4"
             >
-              <div className="w-5/6">
+              <div className="flex-1">
                 <div className="text-wrap text-xl font-bold text-foreground">
                   {facility.FacilityName}
                 </div>
@@ -51,14 +51,17 @@ export default async function Home({ params }: { params: { park: string } }) {
                   </div>
                 </div>
               </div>
-              <div className="w-1/6 text-right">
+              <div className="flex-col pl-8 text-right text-lg sm:flex-none sm:text-base">
                 {facility.StandbyTime === null ||
                 facility.StandbyTime === false ? (
                   <></>
                 ) : (
                   <>
-                    {facility.StandbyTime}
-                    &nbsp;分待ち
+                    <span className="block sm:inline">
+                      {facility.StandbyTime}
+                      &nbsp;分
+                    </span>
+                    <p className="block sm:inline">待ち</p>
                   </>
                 )}
               </div>
