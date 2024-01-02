@@ -1,10 +1,10 @@
 import { badgeVariants } from "@/components/ui/badge";
-import { GetFacilities } from "@/lib/fetcher";
+import { getStandbys } from "@/lib/fetcher";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 export default async function Home({ params }: { params: { park: string } }) {
-  const facilities = await GetFacilities(params.park);
+  const facilities = await getStandbys(params.park);
 
   return (
     <>
@@ -38,27 +38,26 @@ export default async function Home({ params }: { params: { park: string } }) {
         {facilities.map((facility) => {
           return (
             <li
-              key={facility.FacilityID}
+              key={facility.id}
               className="flex items-center overflow-hidden bg-background py-4"
             >
               <div className="flex-1">
                 <div className="text-wrap text-xl font-bold text-foreground">
-                  {facility.FacilityName}
+                  {facility.name}
                 </div>
                 <div className="mt-2 flex">
                   <div className="items-center text-sm text-secondary-foreground">
-                    {facility.OperatingStatus}
+                    {facility.operatingStatus.name}
                   </div>
                 </div>
               </div>
               <div className="flex-col pl-8 text-right text-lg sm:flex-none sm:text-base">
-                {facility.StandbyTime === null ||
-                facility.StandbyTime === false ? (
+                {facility.standbyTime === 0 ? (
                   <></>
                 ) : (
                   <>
                     <span className="block sm:inline">
-                      {facility.StandbyTime}
+                      {facility.standbyTime}
                       &nbsp;分
                     </span>
                     <p className="block sm:inline">待ち</p>
