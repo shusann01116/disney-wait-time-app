@@ -19,7 +19,7 @@ type Facility = {
   FacilityURLSP: string | null;
   FacilityStatusCD: string | null;
   FacilityStatus: string | null;
-  StandbyTime: string | null;
+  StandbyTime: boolean | string | null;
   OperatingHoursFromDate: string;
   OperatingHoursFrom: string;
   OperatingHoursToDate: string;
