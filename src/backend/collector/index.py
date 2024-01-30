@@ -1,22 +1,22 @@
 import json
 import logging
 import os
-from collections.abc import Mapping
 from datetime import datetime, timedelta, timezone
-from decimal import Decimal
-from typing import Any, Literal, Sequence, Set, Union
 
 import boto3
 import requests
-from attraction import Attraction
-from mypy_boto3_dynamodb.client import DynamoDBClient
-from mypy_boto3_dynamodb.type_defs import AttributeValueTypeDef
+from attraction import Attraction, AttractionRepository
 
 logger = logging.getLogger(__name__)
 
 DYNAMODB_TABLENAME = os.getenv("DYNAMODB_TABLENAME")
 if DYNAMODB_TABLENAME is None:
     logger.error("DYNAMODB_TABLENAME is not set.")
+    raise Exception()
+
+S3_BUCKETNAME = os.getenv("S3_BUCKETNAME")
+if S3_BUCKETNAME is None:
+    logger.error("S3_BUCKETNAME is not set.")
     raise Exception()
 
 LOGGING_LEVEL = os.getenv("LOGGING_LEVEL")
@@ -27,114 +27,20 @@ logger.setLevel(LOGGING_LEVEL)
 
 base_url = "https://www.tokyodisneyresort.jp"
 
-paths = [
-    "/_/realtime/tdl_attraction.json",
-    "/_/realtime/tds_attraction.json",
-]
+paths = {
+    "tdl_attraction": "/_/realtime/tdl_attraction.json",
+    "tds_attraction": "/_/realtime/tds_attraction.json",
+    "tdl_greeting": "/_/realtime/tdl_greeting.json",
+    "tds_greeting": "/_/realtime/tds_greeting.json",
+    "tdl_parade_show": "/_/realtime/tdl_parade_show.json",
+    "tds_parade_show": "/_/realtime/tds_parade_show.json",
+}
 
 
 def handler(event, context):
     logger.info(event)
     main()
     return {"statusCode": 200, "body": json.dumps({"message": "ok"})}
-
-
-class AttractionRepository:
-    def __init__(self, client: DynamoDBClient, table_name: str):
-        self.client: DynamoDBClient = client
-        self.table_name = table_name
-
-    def put_item(self, attraction: Attraction) -> None:
-        try:
-            item = self._to_dynamo_item(attraction)
-            self.client.put_item(TableName=self.table_name, Item=item)
-        except Exception as e:
-            logger.error(e)
-            raise e
-
-        logger.info(f"succeeded to put item: {attraction}")
-
-    def _to_dynamo_item(
-        self,
-        attraction: Attraction,
-    ) -> Mapping[
-        str,
-        Union[
-            AttributeValueTypeDef,
-            Union[
-                bytes,
-                bytearray,
-                str,
-                int,
-                Decimal,
-                bool,
-                Set[int],
-                Set[Decimal],
-                Set[str],
-                Set[bytes],
-                Set[bytearray],
-                Sequence[Any],
-                Mapping[str, Any],
-                None,
-            ],
-        ],
-    ]:
-        dt = self._parse_to_datetime(
-            updateTime=attraction.UpdateTime,
-            operatingHoursFromDate=attraction.OperatingHoursFromDate,
-        )
-        return {
-            "attraction_id": {"S": attraction.FacilityID},  # PK
-            "timestamp": {"S": dt.isoformat()},  # SK
-            "date": {"S": dt.strftime("%Y-%m-%d")},  # GPK-1
-            "name": {"S": self._get_str(attraction.FacilityName)},
-            "status_id": {"S": self._get_str(attraction.OperatingStatusCD)},
-            "status": {"S": self._get_str(attraction.OperatingStatus)},
-            "wait_time": {"S": self._get_str(attraction.StandbyTime)},
-        }
-
-    def _get_str(self, value: str | Literal[False] | None) -> str:
-        if value is None:
-            return ""
-        if value is False:
-            return ""
-        return value
-
-    def _parse_to_datetime(
-        self,
-        *,
-        updateTime: str,
-        operatingHoursFromDate: str,
-        timeDelta=9,
-    ) -> datetime:
-        # 23:21
-        (hour, minute) = updateTime.split(":")
-        (hour, minute) = (int(hour), int(minute))
-
-        # 20230823
-        (year, month, day) = (
-            int(operatingHoursFromDate[0:4]),
-            int(operatingHoursFromDate[4:6]),
-            int(operatingHoursFromDate[6:8]),
-        )
-
-        if not 0 <= hour <= 24:
-            raise Exception("hour is not in the range of 0-24")
-        if not 0 <= minute <= 60:
-            raise Exception("minute is not in the range of 0-60")
-        if not 1 <= month <= 12:
-            raise Exception("month is not in the range of 1-12")
-        if not 1 <= day <= 31:
-            raise Exception("day is not in the range of 1-31")
-
-        return datetime(
-            year=year,
-            month=month,
-            day=day,
-            hour=hour,
-            minute=minute,
-            tzinfo=timezone(timedelta(hours=timeDelta)),
-        )
 
 
 def fetch_document(url: str, *, params: dict | None = None) -> str:
@@ -156,16 +62,26 @@ def parse_document(document: str) -> list[Attraction]:
 
 def main() -> None:
     repo = AttractionRepository(boto3.client("dynamodb"), DYNAMODB_TABLENAME)
+    s3 = boto3.client("s3")
+    now = datetime.now(timezone(timedelta(hours=9)))
     attractions: list[Attraction] | None = None
-    for path in paths:
-        attractions = parse_document(
-            fetch_document(
-                base_url
-                + path
-                + "?"
-                + str(int(datetime.now(timezone(timedelta(hours=9))).timestamp())),
+    for key, path in paths.items():
+        logger.info(f"fetching {path}")
+        document = fetch_document(
+            base_url + path + "?" + str(int(now.timestamp())),
+        )
+        s3.put_object(
+            Body=document.encode("utf-8"),
+            Bucket=S3_BUCKETNAME,
+            Key="/".join(
+                [
+                    now.strftime("%Y%m%d"),
+                    f'{now.strftime("%H%M")}_{key}.json',
+                ]
             ),
         )
+
+        attractions = parse_document(document)
 
         if attractions is None:
             logger.warn("no information is fetched")

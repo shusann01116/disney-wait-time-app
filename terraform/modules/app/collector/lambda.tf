@@ -17,6 +17,7 @@ module "collector" {
   environment_variables = {
     DYNAMODB_TABLENAME      = var.table_name
     AWS_LAMBDA_EXEC_WRAPPER = "/opt/otel-instrument"
+    S3_BUCKETNAME           = aws_s3_bucket.tdl_collector_bucket.id
   }
 
   layers = [
@@ -40,6 +41,11 @@ module "collector" {
       actions   = ["dynamodb:PutItem"]
       resources = ["*"]
     },
+    s3 = {
+      effect    = "Allow"
+      actions   = ["s3:PutObject"]
+      resources = ["${aws_s3_bucket.tdl_collector_bucket.arn}/*"]
+    }
   }
 
   tags = {

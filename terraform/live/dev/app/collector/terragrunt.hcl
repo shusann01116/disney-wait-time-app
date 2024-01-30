@@ -8,5 +8,5 @@ include "root" {
 
 inputs = {
   env                = "dev"
-  lambda_source_path = "${get_repo_root()}/app/collector"
+  lambda_source_path = "${get_repo_root()}/src/backend/collector"
 }
