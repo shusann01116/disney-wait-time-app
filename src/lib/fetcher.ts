@@ -71,8 +71,9 @@ export async function getGreetings(park: ParkType): Promise<FacilityResp[]> {
   const parsedData = JSON.parse(greetings);
   const facilities: FacilityResp[] = [];
 
-  Object.values(parsedData).forEach((area: any) => {
-    area.Facility.forEach((facilityWrapper: any) => {
+  Object.values(parsedData).forEach((area) => {
+    // @ts-expect-error we know the type of Facility is FacilityWrapper
+    area.Facility.forEach((facilityWrapper) => {
       const greeting = facilityWrapper.greeting;
       if (greeting) {
         const operatingHours = greeting.operatinghours?.[0] || {};
@@ -113,8 +114,6 @@ async function getData(url: string) {
   });
 
   if (!res.ok) {
-    console.error("Failed to fetch data: ", res.statusText);
-    console.error("Failed to fetch data: ", url);
     return null;
   }
 

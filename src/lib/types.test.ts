@@ -1,3 +1,4 @@
+import { ParkType } from "./fetcher";
 import { getLink } from "./types";
 import { Link } from "./types";
 import { expect, test } from "vitest";
@@ -21,5 +22,5 @@ test("getLink for tds", () => {
 });
 
 test("getLink for invalid park", () => {
-  expect(getLink("invalid" as any)).toBeNull();
+  expect(getLink("invalid" as ParkType)).toBeNull();
 });

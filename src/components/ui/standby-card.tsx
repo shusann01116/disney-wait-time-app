@@ -12,7 +12,6 @@ import { Button } from "./button";
 type StandbyCardProps = {
   facility: FacilityResp;
   size: "sm" | "lg";
-  showImage?: boolean;
   onFavorite: (facilityId: string) => void;
   isFavorite: boolean;
   imageUrl?: string;
@@ -21,7 +20,6 @@ type StandbyCardProps = {
 export const StandbyCard = ({
   facility,
   size,
-  showImage = false,
   onFavorite,
   isFavorite,
   imageUrl,
@@ -30,7 +28,6 @@ export const StandbyCard = ({
     return (
       <SmallStandbyCard
         facility={facility}
-        showImage={showImage}
         onFavorite={onFavorite}
         isFavorite={isFavorite}
         imageUrl={imageUrl}
@@ -43,15 +40,13 @@ export const StandbyCard = ({
 
 const SmallStandbyCard = ({
   facility,
-  showImage,
-  imageUrl,
   isFavorite,
+  imageUrl,
   onFavorite,
 }: {
   facility: FacilityResp;
-  showImage: boolean;
-  imageUrl?: string;
   isFavorite: boolean;
+  imageUrl?: string;
   onFavorite: (facilityId: string) => void;
 }) => {
   const defaultImage =

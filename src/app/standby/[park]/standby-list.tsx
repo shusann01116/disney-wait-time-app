@@ -1,10 +1,10 @@
 import { Suspense } from "react";
-import { getStandbys, ParkType } from "@/lib/fetcher";
+import { FacilityResp, getStandbys, ParkType } from "@/lib/fetcher";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { badgeVariants } from "@/components/ui/badge";
 
-const FacilityItem = ({ facility }: { facility: any }) => {
+const FacilityItem = ({ facility }: { facility: FacilityResp }) => {
   return (
     <li
       key={facility.id}
