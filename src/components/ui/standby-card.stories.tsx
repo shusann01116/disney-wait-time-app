@@ -14,6 +14,7 @@ const facility: FacilityResp = {
 
 const meta: Meta<typeof StandbyCard> = {
   component: StandbyCard,
+  tags: ["autodocs"],
 };
 
 export default meta;
