@@ -7,16 +7,16 @@ export interface Link {
   greeting: string;
 }
 
-const links: Dictionary<string> = {
+const links = {
   tdl_attraction:
     "https://www.tokyodisneyresort.jp/_/realtime/tdl_attraction.json",
   tds_attraction:
     "https://www.tokyodisneyresort.jp/_/realtime/tds_attraction.json",
   tdl_greeting: "https://www.tokyodisneyresort.jp/_/realtime/tdl_greeting.json",
   tds_greeting: "https://www.tokyodisneyresort.jp/_/realtime/tds_greeting.json",
-};
+} as const;
 
-export function getLink(park: string): Link | null {
+export function getLink(park: "tdl" | "tds"): Link | null {
   switch (park) {
     case "tdl":
       return {
