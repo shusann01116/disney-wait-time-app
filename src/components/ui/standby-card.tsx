@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import { Typography as typography } from "./typography";
 import { Clock, Star } from "lucide-react";
 import { Badge, badgeVariants } from "./badge";
-import { useState } from "react";
 import { Button } from "./button";
 
 type StandbyCardProps = {
@@ -53,21 +52,19 @@ const SmallStandbyCard = ({
 }) => {
   return (
     <Card className="flex flex-row gap-4 p-0">
-      <div className="h-full w-[120px]">
-        <AspectRatio ratio={16 / 9}>
-          <Image
-            src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
-            alt="Photo by Drew Beamer"
-            fill
-            className="h-full w-full rounded-md rounded-r-none object-cover"
-          />
-        </AspectRatio>
+      <div className="relative w-[40%] max-w-[120px]">
+        <Image
+          src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
+          alt="Photo by Drew Beamer"
+          fill
+          className="rounded-md rounded-r-none object-cover"
+        />
       </div>
       <div className="mr-4 flex w-full flex-col gap-2 py-2">
         <h1
           className={cn(
             typography({ variant: "large" }),
-            "max-h-[56px] flex-1 overflow-hidden text-ellipsis",
+            "line-clamp-2 w-full overflow-hidden text-ellipsis",
           )}
         >
           {facility.name}
