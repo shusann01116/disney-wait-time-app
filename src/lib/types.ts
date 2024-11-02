@@ -1,7 +1,3 @@
-interface Dictionary<T> {
-  [Key: string]: T;
-}
-
 export interface Link {
   attraction: string;
   greeting: string;
