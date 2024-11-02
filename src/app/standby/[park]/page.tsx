@@ -1,3 +1,4 @@
+import { ParkType } from "@/lib/fetcher";
 import { StandbyList } from "./standby-list";
 import { Suspense } from "react";
 
@@ -12,7 +13,7 @@ export default async function Page({
   const park = (await params).park;
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <StandbyList park={park} />
+      <StandbyList park={park as ParkType} />
     </Suspense>
   );
 }

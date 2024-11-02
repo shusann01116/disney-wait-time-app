@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getStandbys } from "@/lib/fetcher";
+import { getStandbys, ParkType } from "@/lib/fetcher";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { badgeVariants } from "@/components/ui/badge";
@@ -37,7 +37,7 @@ const FacilityItem = ({ facility }: { facility: any }) => {
   );
 };
 
-export const StandbyList = async ({ park }: { park: string }) => {
+export const StandbyList = async ({ park }: { park: ParkType }) => {
   const facilities = await getStandbys(park);
 
   if (!facilities) {
