@@ -2,7 +2,6 @@
 
 import { FacilityResp } from "@/lib/fetcher";
 import { Card } from "./card";
-import { AspectRatio } from "./aspect-ratio";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Typography as typography } from "./typography";
@@ -16,6 +15,7 @@ type StandbyCardProps = {
   showImage?: boolean;
   onFavorite: (facilityId: string) => void;
   isFavorite: boolean;
+  imageUrl?: string;
 };
 
 export const StandbyCard = ({
@@ -24,6 +24,7 @@ export const StandbyCard = ({
   showImage = false,
   onFavorite,
   isFavorite,
+  imageUrl,
 }: StandbyCardProps) => {
   if (size === "sm") {
     return (
@@ -32,6 +33,7 @@ export const StandbyCard = ({
         showImage={showImage}
         onFavorite={onFavorite}
         isFavorite={isFavorite}
+        imageUrl={imageUrl}
       />
     );
   }
@@ -42,19 +44,23 @@ export const StandbyCard = ({
 const SmallStandbyCard = ({
   facility,
   showImage,
+  imageUrl,
   isFavorite,
   onFavorite,
 }: {
   facility: FacilityResp;
   showImage: boolean;
+  imageUrl?: string;
   isFavorite: boolean;
   onFavorite: (facilityId: string) => void;
 }) => {
+  const defaultImage =
+    "https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80";
   return (
     <Card className="flex flex-row gap-4 p-0">
       <div className="relative w-[40%] max-w-[120px]">
         <Image
-          src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
+          src={imageUrl || defaultImage}
           alt="Photo by Drew Beamer"
           fill
           className="rounded-md rounded-r-none object-cover"
