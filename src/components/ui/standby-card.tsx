@@ -2,7 +2,6 @@
 
 import { FacilityResp } from "@/lib/fetcher";
 import { Card } from "./card";
-import { AspectRatio } from "./aspect-ratio";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Typography as typography } from "./typography";
