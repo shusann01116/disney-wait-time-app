@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import PageHeader from "@/components/blocks/page-header";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,10 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(inter.className)}>
-        <PageHeader />
-        <div className="container mx-auto flex flex-col items-center justify-center">
-          {children}
-        </div>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <PageHeader />
+          <div className="container mx-auto flex flex-col items-center justify-center">
+            {children}
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
