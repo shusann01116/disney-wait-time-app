@@ -41,10 +41,12 @@ export const StandbyCard = ({
 const SmallStandbyCard = ({
   facility,
   isFavorite,
+  imageUrl,
   onFavorite,
 }: {
   facility: FacilityResp;
   isFavorite: boolean;
+  imageUrl?: string;
   onFavorite: (facilityId: string) => void;
 }) => {
   const defaultImage =

@@ -24,7 +24,6 @@ export const Default: Story = {
   args: {
     facility,
     size: "sm",
-    showImage: false,
     isFavorite: false,
     onFavorite: fn(),
   },
@@ -41,7 +40,6 @@ export const Favorite: Story = {
   args: {
     facility,
     size: "sm",
-    showImage: false,
     isFavorite: true,
     onFavorite: fn(),
   },
