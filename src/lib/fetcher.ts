@@ -11,7 +11,9 @@ export type FacilityResp = {
   updatedAt: Date;
 };
 
-export async function getStandbys(park: string): Promise<FacilityResp[]> {
+export type ParkType = "tdl" | "tds";
+
+export async function getStandbys(park: ParkType): Promise<FacilityResp[]> {
   const attractions = await getAttractions(park);
   if (attractions === null) {
     return [];
@@ -25,7 +27,7 @@ export async function getStandbys(park: string): Promise<FacilityResp[]> {
   return [...attractions, ...greetings];
 }
 
-export async function getAttractions(park: string): Promise<FacilityResp[]> {
+export async function getAttractions(park: ParkType): Promise<FacilityResp[]> {
   const link = getLink(park);
   if (link == null) {
     return [];
@@ -55,7 +57,7 @@ export async function getAttractions(park: string): Promise<FacilityResp[]> {
   }));
 }
 
-export async function getGreetings(park: string): Promise<FacilityResp[]> {
+export async function getGreetings(park: ParkType): Promise<FacilityResp[]> {
   const link = getLink(park);
   if (link == null) {
     return [];
