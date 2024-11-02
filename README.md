@@ -1,9 +1,5 @@
-# disney-wait-time-app
+# TDR Portal (WIP)
 
-An app collecting the wait time of the Tokyo Disney Land & Sea attractions
+東京ディズニーリゾート内で便利に情報を確認できるポータルサイト
 
-## Collector
-
-The wait time info is collected every hour invoked by Amazon Event Bridge
-
-![image](./doc/CollectorDiagram.png)
+技術的な内容は [doc/Dev.md](./doc/Dev.md) を参照してください。

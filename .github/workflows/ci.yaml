@@ -1,35 +1,28 @@
-name: CI
+name: Lint
 
 on:
   pull_request:
+    types: [opened, synchronize]
   push:
     branches: [main]
-  workflow_dispatch:
 
-env:
-  tf_version: "1.4.6"
-  tg_version: "0.46.3"
-  working_dir: "terraform"
+permissions:
+  contents: read
 
 jobs:
-  pre-commit:
-    runs-on: ubuntu-latest
+  lint:
+    runs-on: [ubuntu-latest]
+    permissions:
+      contents: read
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup
-        uses: actions/setup-python@v3
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
-          version: 8
-          run_install: true
-      - name: pre-commit
-        uses: pre-commit/action@v3.0.0
-      - name: terragrunt
-        uses: gruntwork-io/terragrunt-action@v1
+          version: 9.5.0
+          run_install: false
+      - uses: actions/setup-node@v4
         with:
-          tf_version: ${{ env.tf_version }}
-          tg_version: ${{ env.tg_version }}
-          tg_dir: ${{ env.working_dir }}
-          tg_command: "hclfmt --terragrunt-check --terragrunt-diff"
+          node-version: 22
+          cache: "pnpm"
+      - run: pnpm install
+      - run: pnpm run lint && pnpm run pretty && git diff --exit-code

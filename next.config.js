@@ -3,12 +3,12 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/standby',
-        destination: '/standby/tdl',
-        permanent: true
-      }
-    ]
-  }
-}
+        source: "/standby",
+        destination: "/standby/tdl",
+        permanent: true,
+      },
+    ];
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

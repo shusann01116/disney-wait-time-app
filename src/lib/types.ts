@@ -2,10 +2,10 @@ interface Dictionary<T> {
   [Key: string]: T;
 }
 
-export type Link = {
+export interface Link {
   attraction: string;
   greeting: string;
-};
+}
 
 const links: Dictionary<string> = {
   tdl_attraction:
@@ -33,7 +33,7 @@ export function getLink(park: string): Link | null {
   }
 }
 
-export type FacilityOperatingHours = {
+export interface FacilityOperatingHours {
   OperatingHoursFromDate: string;
   OperatingHoursFrom: string;
   OperatingHoursToDate: string;
@@ -42,9 +42,9 @@ export type FacilityOperatingHours = {
   OperatingStatusCD: string | null;
   OperatingStatus: string | null;
   OperatingChgFlg: boolean;
-};
+}
 
-export type Facility = {
+export interface Facility {
   FacilityID: string;
   FacilityName: string;
   FacilityKanaName: string;
@@ -77,9 +77,9 @@ export type Facility = {
   // greeting
   greeting: FacilityGreeting;
   cameraman?: FacilityCameraman;
-};
+}
 
-export type OperatingHours = {
+export interface OperatingHours {
   OperatingHoursFromDate: string;
   OperatingHoursFrom: string;
   OperatingHoursToDate: string;
@@ -88,9 +88,9 @@ export type OperatingHours = {
   OperatingStatus: string | null;
   OperatingChgFlg: boolean;
   SunsetFlg: boolean;
-};
+}
 
-export type FacilityGreeting = {
+export interface FacilityGreeting {
   FacilityID: string;
   FacilityName: string;
   FacilityKanaName: string;
@@ -104,9 +104,9 @@ export type FacilityGreeting = {
   operatinghours: OperatingHours[];
   UseStandbyTimeStyle: boolean;
   UpdateTime: string;
-};
+}
 
-export type FacilityCameraman = {
+export interface FacilityCameraman {
   FacilityID: string;
   FacilityName: string;
   FacilityKanaName: string;
@@ -114,14 +114,14 @@ export type FacilityCameraman = {
   FacilityStatus: string;
   operatinghours: OperatingHours[] | null;
   UpdateTime: string;
-};
+}
 
-export type Area = {
+export interface Area {
   AreaJName: string;
   AreaMName: string;
   Facility: Facility[];
-};
+}
 
-export type Greetings = {
+export interface Greetings {
   [key: string]: Area;
-};
+}
