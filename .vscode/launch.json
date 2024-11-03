@@ -23,6 +23,17 @@
         "uriFormat": "%s",
         "action": "debugWithChrome"
       }
+    },
+    {
+      "name": "Storybook: debug",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm storybook --no-open",
+      "serverReadyAction": {
+        "pattern": ".+Local:.+(https?://.+/)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
     }
   ]
 }
