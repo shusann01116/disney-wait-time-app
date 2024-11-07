@@ -1648,7 +1648,7 @@ export const mockTdlResp = [
       },
     ],
   },
-];
+] as const;
 
 export const mockTdlRespHandler = http.get(
   "https://www.tokyodisneyresort.jp/_/realtime/tdl_attraction.json",
@@ -3203,7 +3203,7 @@ export const mockTdsResp = [
       },
     ],
   },
-];
+] as const;
 
 export const mockTdsRespHandler = http.get(
   "https://www.tokyodisneyresort.jp/_/realtime/tds_attraction.json",
@@ -3370,7 +3370,7 @@ export const mockTdlGreetingResp = {
       },
     ],
   },
-};
+} as const;
 
 export const mockTdlGreetingRespHandler = http.get(
   "https://www.tokyodisneyresort.jp/_/realtime/tdl_greeting.json",
@@ -3576,7 +3576,7 @@ export const mockTdsGreetingResp = {
       },
     ],
   },
-};
+} as const;
 
 export const mockTdsGreetingRespHandler = http.get(
   "https://www.tokyodisneyresort.jp/_/realtime/tds_greeting.json",

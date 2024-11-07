@@ -1,26 +1,28 @@
 import { ParkType } from "./fetcher";
 import { getLink } from "./types";
 import { Link } from "./types";
-import { expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 
-test("getLink for tdl", () => {
-  const expected: Link = {
-    attraction:
-      "https://www.tokyodisneyresort.jp/_/realtime/tdl_attraction.json",
-    greeting: "https://www.tokyodisneyresort.jp/_/realtime/tdl_greeting.json",
-  };
-  expect(getLink("tdl")).toEqual(expected);
-});
+describe("getLink", () => {
+  it("getLink for tdl", () => {
+    const expected: Link = {
+      attraction:
+        "https://www.tokyodisneyresort.jp/_/realtime/tdl_attraction.json",
+      greeting: "https://www.tokyodisneyresort.jp/_/realtime/tdl_greeting.json",
+    };
+    expect(getLink("tdl")).toEqual(expected);
+  });
 
-test("getLink for tds", () => {
-  const expected2: Link = {
-    attraction:
-      "https://www.tokyodisneyresort.jp/_/realtime/tds_attraction.json",
-    greeting: "https://www.tokyodisneyresort.jp/_/realtime/tds_greeting.json",
-  };
-  expect(getLink("tds")).toEqual(expected2);
-});
+  it("getLink for tds", () => {
+    const expected: Link = {
+      attraction:
+        "https://www.tokyodisneyresort.jp/_/realtime/tds_attraction.json",
+      greeting: "https://www.tokyodisneyresort.jp/_/realtime/tds_greeting.json",
+    };
+    expect(getLink("tds")).toEqual(expected);
+  });
 
-test("getLink for invalid park", () => {
-  expect(getLink("invalid" as ParkType)).toBeNull();
+  it("getLink for invalid park", () => {
+    expect(getLink("invalid" as ParkType)).toBeNull();
+  });
 });

@@ -19,9 +19,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={cn(inter.className)}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <PageHeader />
-          <div className="container mx-auto flex flex-col items-center justify-center">
+          <main className="container mx-auto flex flex-col items-center justify-center py-4">
             {children}
-          </div>
+          </main>
         </ThemeProvider>
       </body>
     </html>

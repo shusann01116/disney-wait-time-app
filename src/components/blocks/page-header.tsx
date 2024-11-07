@@ -1,44 +1,20 @@
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { Poiret_One } from "next/font/google";
 
-const menuItems = [
-  {
-    label: "Standby",
-    href: "/standby",
-  },
-];
+const poiret = Poiret_One({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-poiret",
+});
 
 export default function PageHeader() {
   return (
-    <header className="sticky left-0 top-0 mx-8 flex justify-center bg-background/50 py-1 backdrop-blur-lg">
-      <span className="flex w-full max-w-screen-lg items-baseline gap-x-4">
-        <Link href="/standby" className="font-sans font-bold">
-          Disney App
+    <header className="flex justify-center bg-background/50 px-4 py-1 backdrop-blur-lg">
+      <span className="w-full max-w-screen-lg">
+        <Link href="/" className={cn(poiret.className, "text-4xl font-bold")}>
+          Disney Portal
         </Link>
-        <NavigationMenu>
-          <NavigationMenuList>
-            {menuItems.map((item) => (
-              <NavigationMenuItem key={item.href}>
-                <NavigationMenuLink
-                  className={cn(
-                    navigationMenuTriggerStyle(),
-                    "bg-transparent hover:underline hover:underline-offset-1",
-                  )}
-                  href={item.href}
-                >
-                  {item.label}
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
       </span>
     </header>
   );
