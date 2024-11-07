@@ -86,7 +86,13 @@ const SmallStandbyCard = ({
             )}
           </Button>
           <Badge variant="outline" className="flex items-center gap-1">
-            <Clock className="h-3 w-3" /> {facility.standbyTime}分待ち
+            {facility.standbyTime !== 0 ? (
+              <>
+                <Clock className="h-3 w-3" /> {facility.standbyTime}分待ち
+              </>
+            ) : (
+              <>案内終了</>
+            )}
           </Badge>
         </section>
       </div>
