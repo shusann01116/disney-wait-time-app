@@ -77,3 +77,4 @@ terragrunt.iml
 .ruff_cache
 
 *storybook.log
+public/mockServiceWorker.js
