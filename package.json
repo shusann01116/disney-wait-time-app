@@ -36,7 +36,7 @@
     "@chromatic-com/storybook": "^3.2.2",
     "@eslint/js": "^9.14.0",
     "@storybook/addon-essentials": "^8.4.1",
-    "@storybook/addon-interactions": "^8.4.1",
+    "@storybook/addon-interactions": "^8.4.2",
     "@storybook/addon-onboarding": "^8.4.2",
     "@storybook/addon-styling-webpack": "^1.0.1",
     "@storybook/addon-themes": "^8.4.2",
