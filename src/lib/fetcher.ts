@@ -1,6 +1,10 @@
 "use server";
 
-import { Facility, getLink } from "@/lib/types";
+import { Facility, getLink, Greetings } from "@/lib/types";
+import {
+  toFacilityRespFromAttraction,
+  toFacilityRespFromGreeting,
+} from "./facility";
 
 export type FacilityResp = {
   id: string;
@@ -39,22 +43,7 @@ export async function getAttractions(park: ParkType): Promise<FacilityResp[]> {
   }
 
   const facilities = JSON.parse(attractions) as Facility[];
-
-  return facilities.map((f) => ({
-    id: f.FacilityID,
-    name: f.FacilityName,
-    operatingStatus: {
-      id: f.OperatingStatusCD ?? "",
-      name: f.OperatingStatus ?? "",
-    },
-    operatingHour: {
-      from: new Date(`${f.OperatingHoursFromDate} ${f.OperatingHoursFrom}:00`),
-      to: new Date(`${f.OperatingHoursToDate} ${f.OperatingHoursTo}:00`),
-    },
-    standbyTime:
-      typeof f.StandbyTime === "string" ? parseInt(f.StandbyTime, 10) : 0,
-    updatedAt: new Date(f.UpdateTime),
-  }));
+  return facilities.map(toFacilityRespFromAttraction);
 }
 
 export async function getGreetings(park: ParkType): Promise<FacilityResp[]> {
@@ -68,36 +57,14 @@ export async function getGreetings(park: ParkType): Promise<FacilityResp[]> {
     return [];
   }
 
-  const parsedData = JSON.parse(greetings);
+  const parsedData = JSON.parse(greetings) as Greetings;
   const facilities: FacilityResp[] = [];
 
   Object.values(parsedData).forEach((area) => {
-    // @ts-expect-error we know the type of Facility is FacilityWrapper
-    area.Facility.forEach((facilityWrapper) => {
-      const greeting = facilityWrapper.greeting;
-      if (greeting) {
-        const operatingHours = greeting.operatinghours?.[0] || {};
-        facilities.push({
-          id: greeting.FacilityID,
-          name: greeting.FacilityName,
-          operatingStatus: {
-            id: operatingHours.OperatingStatusCD ?? "",
-            name: operatingHours.OperatingStatus ?? "",
-          },
-          operatingHour: {
-            from: new Date(
-              `${operatingHours.OperatingHoursFromDate} ${operatingHours.OperatingHoursFrom}:00`,
-            ),
-            to: new Date(
-              `${operatingHours.OperatingHoursToDate} ${operatingHours.OperatingHoursTo}:00`,
-            ),
-          },
-          standbyTime:
-            typeof greeting.StandbyTime === "string"
-              ? parseInt(greeting.StandbyTime, 10)
-              : 0,
-          updatedAt: new Date(greeting.UpdateTime),
-        });
+    area.Facility.forEach((facility) => {
+      const facilityResp = toFacilityRespFromGreeting(facility);
+      if (facilityResp) {
+        facilities.push(facilityResp);
       }
     });
   });
