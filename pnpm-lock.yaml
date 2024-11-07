@@ -70,8 +70,8 @@ importers:
         specifier: ^8.4.1
         version: 8.4.1(@types/react@18.3.12)(storybook@8.4.2(prettier@3.3.3))(webpack-sources@3.2.3)
       '@storybook/addon-interactions':
-        specifier: ^8.4.1
-        version: 8.4.1(storybook@8.4.2(prettier@3.3.3))
+        specifier: ^8.4.2
+        version: 8.4.2(storybook@8.4.2(prettier@3.3.3))
       '@storybook/addon-onboarding':
         specifier: ^8.4.2
         version: 8.4.2(react@18.3.1)(storybook@8.4.2(prettier@3.3.3))
@@ -1809,10 +1809,10 @@ packages:
     peerDependencies:
       storybook: ^8.4.1
 
-  '@storybook/addon-interactions@8.4.1':
-    resolution: {integrity: sha512-rMxKehtQogV6Scjb/oqMFM0Mwn8NJRuGFDRJE3TBijNSJ2HPJms+xXp8KVZJengadlsF5HFwQBbnZzIeFDQRLw==}
+  '@storybook/addon-interactions@8.4.2':
+    resolution: {integrity: sha512-+/NTENTApeOcONgFNQ6Olbk0GH3pTDG3w0eh00slCB+2agD1BcVKg8SSlHQV0lQF1cK3vWL/X3jeaxdFLYOjjg==}
     peerDependencies:
-      storybook: ^8.4.1
+      storybook: ^8.4.2
 
   '@storybook/addon-measure@8.4.1':
     resolution: {integrity: sha512-Pg1ROj29hKt7grL/HmbIJ10WrkZf1Unx35SsP373bkPQ1ggYi9oxGqtfNchTF2zCb1xUpIikLYSJgkwdjqWxhA==}
@@ -6832,11 +6832,11 @@ snapshots:
       '@storybook/global': 5.0.0
       storybook: 8.4.2(prettier@3.3.3)
 
-  '@storybook/addon-interactions@8.4.1(storybook@8.4.2(prettier@3.3.3))':
+  '@storybook/addon-interactions@8.4.2(storybook@8.4.2(prettier@3.3.3))':
     dependencies:
       '@storybook/global': 5.0.0
-      '@storybook/instrumenter': 8.4.1(storybook@8.4.2(prettier@3.3.3))
-      '@storybook/test': 8.4.1(storybook@8.4.2(prettier@3.3.3))
+      '@storybook/instrumenter': 8.4.2(storybook@8.4.2(prettier@3.3.3))
+      '@storybook/test': 8.4.2(storybook@8.4.2(prettier@3.3.3))
       polished: 4.3.1
       storybook: 8.4.2(prettier@3.3.3)
       ts-dedent: 2.2.0
